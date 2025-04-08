@@ -49,6 +49,7 @@ async function formatMessagesPerSymbol(data) {
 📈 <b>Buy:</b> ${buyVolume.toLocaleString()} || 📉 <b>Sell:</b> ${sellVolume.toLocaleString()}
 📊 <b>Volume:</b> ${latest.v.toLocaleString()} || ${trend} ${buyMorePercent.toFixed(1)}%
 ⛓️ <b>TxBuy:</b> ${latest.btx} || <b>TXSell:</b> ${sellTx} || ${trendTX} ${buyMorePercentTx.toFixed(1)}%
+
 `.trim();
 
 
