@@ -10,6 +10,8 @@ const sendToTelegram = async (message) => {
             parse_mode: 'HTML'
         });
         console.log("✅ Đã gửi Telegram");
+        console.log(`Message sent to chat ID: ${chat_id}`);
+
     } catch (err) {
         console.error("❌ Lỗi gửi Telegram:", err.response?.data || err.message);
     }

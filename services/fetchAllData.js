@@ -164,9 +164,7 @@ async function fetchAllData() {
     }
 
     const filtered = filterBullishAbove10Percent(allData);
-    console.log("⏳ Chờ 1 phút sau khi lọc dữ liệu tăng mạnh toàn bộ...\n");
-    // await delay(60 * 1000); // Delay nếu cần
-
+    console.log("⏳ Đợi thêm data và gửi...\n");
     const messages = await formatMessagesPerSymbol(filtered);
 
     for (const { symbol, message } of messages) {
