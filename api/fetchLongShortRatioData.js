@@ -1,11 +1,22 @@
 const axios = require('axios');
-const now = new Date(); // Lấy thời gian hiện tại
-const nowTimestamp = Math.floor(now.getTime() / 1000); // Unix timestamp hiện tại
-const from = Math.floor(nowTimestamp / 3600) * 3600; // Làm tròn về đầu giờ
-const to = from; // Thời gian hiện tại
+
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
+
+
+
+const { API_KEY } = require('../config');
+
 const fetchLongShortRatioData = async (symbol, retries = 3) => {
+    const now = new Date(); // Lấy thời gian hiện tại
+    const nowTimestamp = Math.floor(now.getTime() / 1000); // Unix timestamp hiện tại
+    const from = Math.floor(nowTimestamp / 3600) * 3600; // Làm tròn về đầu giờ
+    const to = from; // Thời gian hiện tại
+
+
+
+    // console.log("📦 from:Long", from, "| to:", to);
+
     const url = "https://api.coinalyze.net/v1/long-short-ratio-history";
 
     for (let attempt = 0; attempt < retries; attempt++) {

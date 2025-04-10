@@ -87,7 +87,7 @@ const { createApiUrl } = require("../api/createApiUrl");
 const axios = require("axios");
 const filterBullishAbove10Percent = require("../utils/filterBullishAbove10Percent");
 const sendToTelegram = require("../telegram/sendMessage");
-const { from, to, API_KEY } = require('../config');
+const {  API_KEY } = require('../config');
 const formatMessagesPerSymbol = require('../services/formatMessages');
 const symbolGroups = require('../utils/groupSymbols');
 
@@ -97,8 +97,18 @@ function delay(ms) {
 
 async function fetchAllData() {
     const allData = {};
+
+
+const now = new Date(); // Lấy thời gian hiện tại
+const nowTimestamp = Math.floor(now.getTime() / 1000); // Unix timestamp hiện tại
+const from = Math.floor(nowTimestamp / 3600) * 3600; // Làm tròn về đầu giờ
+const to = from; // Thời gian hiện tại
+
+
+
+
     console.log("⏰ Đang chạy cron lúc:", new Date().toLocaleString());
-    console.log("📦 from:", from, "| to:", to);
+    console.log("📦 from1:", from, "| to:", to);
 
     for (let i = 0; i < symbolGroups.length; i += 2) {
         const group1 = symbolGroups[i];

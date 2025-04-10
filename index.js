@@ -18,8 +18,9 @@ function delay(ms) {
 
 // ==== MAIN FUNCTION ====
 
-fetchAllData();
 startScheduler();
+
+fetchAllData();
 
 
 
