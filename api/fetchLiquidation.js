@@ -1,4 +1,7 @@
-const { from, to, API_KEY } = require('../config');
+const now = new Date(); // Lấy thời gian hiện tại
+const nowTimestamp = Math.floor(now.getTime() / 1000); // Unix timestamp hiện tại
+const from = Math.floor(nowTimestamp / 3600) * 3600; // Làm tròn về đầu giờ
+const to = from; // Thời gian hiện tại
 
 const fetchLiquidation = async (symbol) => {
     const url = `https://api.coinalyze.net/v1/liquidation-history?symbols=${symbol}_PERP.A&interval=1hour&from=${from}&to=${to}&api_key=${API_KEY}`;
