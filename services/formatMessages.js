@@ -110,13 +110,23 @@ if (buyMorePercent > 10 && parsedRatio > 1 && parsedPredicted > 0 && parsedOiCha
     summary = "🔥 <b>LONG mạnh</b>";
 } else if (buyMorePercent > 0 && parsedRatio > 1 && parsedPredicted > 0 && parsedOiChange > 0) {
     summary = "🟢 <b>LONG full xanh</b>";
-} else if (buyMorePercent > 0 && parsedRatio > 1 && parsedPredicted > -1 && parsedOiChange > 0) {
+} else if (buyMorePercent > 0 && parsedRatio > 1 && parsedPredicted > -1 && parsedPredicted <= 0 && parsedOiChange > 0) {
     summary = "🟡 <b>LONG funding âm nhẹ</b>";
 } else if (buyMorePercent > 0 && parsedRatio < 1 && parsedPredicted > 0 && parsedOiChange > 0) {
     summary = "🟡 <b>LONG Radio âm</b>";
-} else if (buyMorePercent > 0 && parsedRatio < 1 && parsedPredicted < 0 && parsedPredicted > -1 ) {
+} else if (buyMorePercent > 0 && parsedRatio < 1 && parsedPredicted > -1 && parsedPredicted < 0) {
     summary = "🔁 <b>LONG ngược</b>";
+} else if (buyMorePercent < 0 && parsedRatio < 0 && parsedPredicted < 0 && parsedOiChange < 0) {
+    summary = "🔻 <b>Full âm</b>";
+} else if (buyMorePercent < 0 && parsedRatio < 0 && parsedPredicted < 0 && parsedOiChange > 0) {
+    summary = "🔺 <b>Âm nhưng OI tăng</b>";
+} else if (parsedPredicted <= -1 && parsedPredicted >= -10) {
+    summary = "🔻 <b>Funding Rate âm</b>";
+} else {
+    summary = "⚪️ <b>Không rõ xu hướng</b>";
 }
+
+
 
 const summaryPart = summary ? `\n\n📌 <b>Tín hiệu:</b> ${summary}` : "";
 
