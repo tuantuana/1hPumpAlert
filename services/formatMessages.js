@@ -63,7 +63,6 @@ async function formatMessagesPerSymbol(data) {
 
         const lsrPart = `⚠️ <b>LS Ratio:</b> ${ratio}
 🟢 <b>Long:</b> ${longRatio} % | 🔴 Short: ${shortRatio} %
-⏱️ <b>Time:</b> ${formattedTime}
 `.trim();
 
         // ===== PHẦN 4: PREDICTED FUNDING RATE =====
@@ -74,30 +73,36 @@ async function formatMessagesPerSymbol(data) {
         // if (predictedRate !== "N/A" && (parseFloat(predictedRate) >= -10 && parseFloat(predictedRate) <= -1)) {
         //     continue; // Bỏ qua symbol này nếu predictedFundingRate trong khoảng từ -1 đến -10
         // }
-
+        // ⏱️ <b>Time:</b> ${fundingTime}
         const fundingTime = fundingData?.update
             ? new Date(fundingData.update).toLocaleString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" })
             : "N/A";
 
         const fundingRatePart = `💰 <b>Predicted Funding:</b> ${predictedRate}
-⏱️ <b>Update:</b> ${fundingTime}
 `.trim();
 
         // ===== PHẦN 5: OPEN INTEREST CHANGE =====
-        const oiData = await fetchOpenInterestChange(symbol);
-        const oiChange = oiData
-            ? ((oiData.close - oiData.open) / oiData.open * 100).toFixed(2) + '%'
-            : "N/A";
+const oiData = await fetchOpenInterestChange(symbol);
+const oiChange = oiData
+    ? ((oiData.close - oiData.open) / oiData.open * 100).toFixed(2) + '%'
+    : "N/A";
 
-        // Làm tròn trước khi format
-        const openFormatted = oiData?.open ? Math.round(oiData.open).toLocaleString() : "N/A";
-        const closeFormatted = oiData?.close ? Math.round(oiData.close).toLocaleString() : "N/A";
+// Làm tròn trước khi format
+const openFormatted = oiData?.open ? Math.round(oiData.open).toLocaleString() : "N/A";
+const closeFormatted = oiData?.close ? Math.round(oiData.close).toLocaleString() : "N/A";
 
-        const openInterestPart = `📊 <b>OI Change:</b> ${oiChange}
+// Thêm thời gian từ timestamp
+const oiTime = oiData?.timestamp
+    ? new Date(oiData.timestamp).toLocaleString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" })
+    : "N/A";
+
+const openInterestPart = `📊 <b>OI Change:</b> ${oiChange}
 🔓 Open: ${openFormatted}
 🔒 Close: ${closeFormatted}
+⏱️ <b>Time:</b> ${oiTime}
 <b>  「 ✔ ᵛᵉʳᶦᶦᵉᵈ」      </b>
 `.trim();
+
 
         // ===== PHẦN 6: TỔNG KẾT =====
 let summary = "";
