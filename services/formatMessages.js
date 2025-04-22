@@ -108,6 +108,10 @@ const parsedOiChange = parseFloat(oiChange.replace('%', ''));
 
 if (buyMorePercent > 10 && parsedRatio > 1 && parsedPredicted > 0 && parsedOiChange > 10) {
     summary = "🔥 <b>LONG mạnh</b>";
+} else if (buyMorePercent > 10 && parsedPredicted <= -1 && parsedPredicted >= -10) {
+    summary = "🧨 <b>LONG theo Funding Rate</b>";
+} else if (buyMorePercent < -10 && parsedPredicted <= -1 && parsedPredicted >= -10) {
+    summary = "💥 <b>SHORT theo Funding Rate</b>";
 } else if (buyMorePercent > 0 && parsedRatio > 1 && parsedPredicted > 0 && parsedOiChange > 0) {
     summary = "🟢 <b>LONG full xanh</b>";
 } else if (buyMorePercent > 0 && parsedRatio > 1 && parsedPredicted > -1 && parsedPredicted <= 0 && parsedOiChange > 0) {
@@ -125,6 +129,7 @@ if (buyMorePercent > 10 && parsedRatio > 1 && parsedPredicted > 0 && parsedOiCha
 } else {
     summary = "⚪️ <b>Không rõ xu hướng</b>";
 }
+
 
 
 
