@@ -16,6 +16,7 @@ async function formatMessagesPerSymbol(data) {
         const latest = candles.at(-1);
         const prev = candles.length >= 2 ? candles.at(-2) : null;
         const displaySymbol = escapeHtml(symbol.replace('_PERP.A', ''));
+        const displaySymbolSpot = escapeHtml(symbol.replace('USDT_PERP.A', ''));
 
         // time
         const now = new Date();  // Lấy thời gian hiện tại
@@ -41,10 +42,11 @@ async function formatMessagesPerSymbol(data) {
         const buyMorePercentTx = ((latest.btx - sellTx) / sellTx) * 100;
         const trendTX = buyMorePercentTx > 0 ? "⬆️" : "⬇️";
 
-        const pricePart = `⭐⭐⭐ <code><b><i>${displaySymbol}</i></b></code> ⭐⭐⭐
+        const pricePart = `⭐⭐⭐ <code><b><i>${displaySymbolSpot}</i></b></code> ⭐⭐⭐
 🔸 <b>Price:</b> ${(latest.c)}
 🚀 <b>PriceChange:</b> ${percentChange1.toFixed(1)}%
 ╰┈➤<a href="https://www.coinglass.com/tv/vi/Binance_${displaySymbol}"> Coinglass </a>
+╰┈➤<a href="https://www.coinglass.com/vi/currencies/${displaySymbolSpot}?type=spot"> Spot </a>
 📊 <b>Volume:</b> ${latest.v.toLocaleString()} || ${trend} ${buyMorePercent.toFixed(1)}%
 📈 <b>Buy:</b> ${buyVolume.toLocaleString()} || 📉 <b>Sell:</b> ${sellVolume.toLocaleString()}
 ⛓️ <b>TxBuy:</b> ${latest.btx} || <b>TXSell:</b> ${sellTx} || ${trendTX} ${buyMorePercentTx.toFixed(1)}%
@@ -81,27 +83,27 @@ async function formatMessagesPerSymbol(data) {
         const fundingRatePart = `💰 <b>Predicted Funding:</b> ${predictedRate}
 `.trim();
 
-        // ===== PHẦN 5: OPEN INTEREST CHANGE =====
+// ===== PHẦN 5: OPEN INTEREST CHANGE =====
 const oiData = await fetchOpenInterestChange(symbol);
 const oiChange = oiData
     ? ((oiData.close - oiData.open) / oiData.open * 100).toFixed(2) + '%'
     : "N/A";
 
-// Làm tròn trước khi format
 const openFormatted = oiData?.open ? Math.round(oiData.open).toLocaleString() : "N/A";
 const closeFormatted = oiData?.close ? Math.round(oiData.close).toLocaleString() : "N/A";
 
-// Thêm thời gian từ timestamp
+// Sửa lỗi timestamp: nhân với 1000 để đổi sang mili giây
 const oiTime = oiData?.timestamp
-    ? new Date(oiData.timestamp).toLocaleString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" })
+    ? new Date(oiData.timestamp * 1000).toLocaleString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" })
     : "N/A";
 
 const openInterestPart = `📊 <b>OI Change:</b> ${oiChange}
 🔓 Open: ${openFormatted}
 🔒 Close: ${closeFormatted}
 ⏱️ <b>Time:</b> ${oiTime}
-<b>  「 ✔ ᵛᵉʳᶦᶦᵉᵈ」      </b>
+<b>  「 ✔ ᵛᵉʳᶦᶦᵉᵈ」 </b>
 `.trim();
+
 
 
         // ===== PHẦN 6: TỔNG KẾT =====

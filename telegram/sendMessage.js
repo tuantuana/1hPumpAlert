@@ -7,7 +7,9 @@ const sendToTelegram = async (message) => {
         await axios.post(url, {
             chat_id: TELEGRAM_CHAT_ID,
             text: message,
-            parse_mode: 'HTML'
+            parse_mode: 'HTML',
+            disable_web_page_preview: true, // 👉 Tắt preview link
+
         });
         console.log("✅ Đã gửi Telegram");
         console.log(`Message sent to chat ID: ${chat_id}`);
