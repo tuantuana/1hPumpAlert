@@ -13,7 +13,7 @@ const fetchLiquidation = async (symbol) => {
 
     // console.log("📦 from:liqui", from, "| to:", to);
 
-    const url = `https://api.coinalyze.net/v1/liquidation-history?symbols=${symbol}_PERP.A&interval=1hour&from=${from}&to=${to}&api_key=${API_KEY}`;
+    const url = `https://api.coinalyze.net/v1/liquidation-history?symbols=${symbol}_PERP.A&interval=1hour&from=${from}&to=${to}&api_key=${API_KEY}&convert_to_usd=true`;
     try {
         const res = await fetch(url);
         const data = await res.json();

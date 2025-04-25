@@ -42,20 +42,37 @@ async function formatMessagesPerSymbol(data) {
         const buyMorePercentTx = ((latest.btx - sellTx) / sellTx) * 100;
         const trendTX = buyMorePercentTx > 0 ? "⬆️" : "⬇️";
 
-        const pricePart = `⭐⭐⭐ <code><b><i>${displaySymbolSpot}</i></b></code> ⭐⭐⭐
+        // Đặt lại locale cho "vi-VN" (hoặc "en-US" nếu muốn dấu "," cho phân cách hàng nghìn)
+        const formatNumber = (num) => {
+            return Math.round(num).toLocaleString('en-US'); // Làm tròn và dùng định dạng ngắn gọn
+        }
+        
+        // Áp dụng định dạng cho các số volume
+        const volumeFormatted = formatNumber(latest.v);
+        const buyVolumeFormatted = formatNumber(buyVolume);
+        const sellVolumeFormatted = formatNumber(sellVolume);
+
+
+        
+        const pricePart = `         ⭐⭐⭐ <code><b><i>${displaySymbolSpot}</i></b></code> ⭐⭐⭐
 🔸 <b>Price:</b> ${(latest.c)}
 🚀 <b>PriceChange:</b> ${percentChange1.toFixed(1)}%
-╰┈➤<a href="https://www.coinglass.com/tv/vi/Binance_${displaySymbol}"> Coinglass </a>
-╰┈➤<a href="https://www.coinglass.com/vi/currencies/${displaySymbolSpot}?type=spot"> Spot </a>
-📊 <b>Volume:</b> ${latest.v.toLocaleString()} || ${trend} ${buyMorePercent.toFixed(1)}%
-📈 <b>Buy:</b> ${buyVolume.toLocaleString()} || 📉 <b>Sell:</b> ${sellVolume.toLocaleString()}
-⛓️ <b>TxBuy:</b> ${latest.btx} || <b>TXSell:</b> ${sellTx} || ${trendTX} ${buyMorePercentTx.toFixed(1)}%
+╰┈➤<a href="https://www.coinglass.com/tv/vi/Binance_${displaySymbol}"> Chart Coinglass </a>
+╰┈➤<a href="https://www.coinglass.com/vi/currencies/${displaySymbolSpot}?type=spot"> Check Spot </a>
+╰┈➤<a href="https://www.mexc.com/vi-VN/futures/${displaySymbolSpot}_USDT?type=linear_swap&lang=vi-VN"> Trade Mexc  </a>
+📊 <b>Volume:</b> ${volumeFormatted} || ${trend} ${buyMorePercent.toFixed(1)}%
+📈 <b>Buy:</b> ${buyVolumeFormatted} || 📉 <b>Sell:</b> ${sellVolumeFormatted}
 `.trim();
 
-        // ===== PHẦN 2: LIQUIDATION =====
-        const { long = 0, short = 0 } = await fetchLiquidation(displaySymbol);
-        const liquidationPart = `💥 <b>Liquidation</b> 
-🟢<b> Long:</b> $ ${long.toLocaleString()} || 🔴 <b>Short:</b> $ ${short.toLocaleString()}`.trim();
+       // ===== PHẦN 2: LIQUIDATION =====
+       const { long = 0, short = 0 } = await fetchLiquidation(displaySymbol);
+       // Áp dụng cho long và short
+   const longFormatted = formatNumber(long);
+   const shortFormatted = formatNumber(short);
+
+   const liquidationPart = `💥 <b>Liquidation</b> 
+🟢<b> Long:</b> $ ${longFormatted} || 🔴 <b>Short:</b> $ ${shortFormatted}`.trim();
+
 
         // ===== PHẦN 3: LONG SHORT RATIO =====
         const ratioData = await fetchLongShortRatioData(symbol);
