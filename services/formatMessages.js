@@ -3,6 +3,7 @@
 const escapeHtml = require("../utils/escapeHtml");
 const fetchLiquidation = require("../api/fetchLiquidation");
 const fetchLongShortRatioData = require("../api/fetchLongShortRatioData");
+const fetchLongShortRatioDataPreviousHour = require("../api/fetchLongShortRatioDataPreviousHour");
 const fetchPredictedFundingRate = require('../api/fetchPredictedFundingRate');
 const fetchOpenInterestChange = require('../api/fetchOpenInterestChange');
 
@@ -74,15 +75,21 @@ async function formatMessagesPerSymbol(data) {
 🟢<b> Long:</b> $ ${longFormatted} || 🔴 <b>Short:</b> $ ${shortFormatted}`.trim();
 
 
-        // ===== PHẦN 3: LONG SHORT RATIO =====
-        const ratioData = await fetchLongShortRatioData(symbol);
-        const ratio = ratioData?.ratio?.toFixed(2) || "N/A";
-        const longRatio = ratioData?.longRatio?.toFixed(1) || "N/A";
-        const shortRatio = ratioData?.shortRatio?.toFixed(1) || "N/A";
+  // ===== PHẦN 3: LONG SHORT RATIO =====
+const ratioData = await fetchLongShortRatioData(symbol); // Giờ hiện tại
+const previousRatioData = await fetchLongShortRatioDataPreviousHour(symbol); // Giờ trước đó
 
-        const lsrPart = `⚠️ <b>LS Ratio:</b> ${ratio}
+const ratio = ratioData?.ratio?.toFixed(2) || "N/A";
+const longRatio = ratioData?.longRatio?.toFixed(1) || "N/A";
+const shortRatio = ratioData?.shortRatio?.toFixed(1) || "N/A";
+
+// Thông tin giờ trước
+const previousRatio = previousRatioData?.ratio?.toFixed(2) || "N/A";
+
+const lsrPart = `⚠️ <b>LS Ratio:</b> ${previousRatio} ➤➤ ${ratio}
 🟢 <b>Long:</b> ${longRatio} % | 🔴 Short: ${shortRatio} %
 `.trim();
+
 
         // ===== PHẦN 4: PREDICTED FUNDING RATE =====
         const fundingData = await fetchPredictedFundingRate(symbol);
@@ -122,22 +129,21 @@ const openInterestPart = `📊 <b>OI Change:</b> ${oiChange}
 `.trim();
 
 
-
-        // ===== PHẦN 6: TỔNG KẾT =====
+// ===== PHẦN 6: TỔNG KẾT =====
 let summary = "";
 
 const parsedPredicted = parseFloat(predictedRate);
 const parsedRatio = parseFloat(ratio);
 const parsedOiChange = parseFloat(oiChange.replace('%', ''));
 
-
-
-if (buyMorePercent > 10 && parsedRatio >= 1 && parsedPredicted > 0 && parsedOiChange > 3) {
+if (buyMorePercent > 10 && parsedRatio >= 1 && parsedPredicted > 0 && parsedOiChange > 10) {
     summary = "🔥 <b>LONG mạnh</b>";
 } else if (buyMorePercent > 10 && parsedPredicted <= -1 && parsedPredicted >= -10) {
     summary = "🧨 <b>LONG theo Funding Rate</b>";
 } else if (buyMorePercent < -10 && parsedPredicted <= -1 && parsedPredicted >= -10) {
     summary = "💥 <b>SHORT theo Funding Rate</b>";
+} else if (buyMorePercent > 0 && parsedRatio >= 1 && parsedPredicted > 0 && parsedOiChange < 0) {
+    summary = "🟠 <b>3 chỉ số dương, OI giảm</b>";
 } else if (buyMorePercent > 0 && parsedRatio >= 1 && parsedPredicted > 0 && parsedOiChange > 0) {
     summary = "🟢 <b>LONG full xanh</b>";
 } else if (buyMorePercent > 0 && parsedRatio >= 1 && parsedPredicted > -1 && parsedPredicted <= 0 && parsedOiChange > 0) {
@@ -152,25 +158,39 @@ if (buyMorePercent > 10 && parsedRatio >= 1 && parsedPredicted > 0 && parsedOiCh
     summary = "🔺 <b>Âm nhưng OI tăng</b>";
 } else if (parsedPredicted <= -1 && parsedPredicted >= -10) {
     summary = "🔻 <b>Funding Rate âm</b>";
-} else {
-    summary = "⚪️ <b>Không rõ xu hướng</b>";
+}
+
+// Nếu không có summary (không rõ xu hướng) thì bỏ qua symbol luôn
+if (!summary) {
+    continue;
+}
+
+let ratioTrend = "";
+
+const parsedPreviousRatio = parseFloat(previousRatio);
+
+if (!isNaN(parsedRatio) && !isNaN(parsedPreviousRatio)) {
+    if (parsedRatio > parsedPreviousRatio) {
+        ratioTrend = "📈 LS Ratio tăng";
+    } else if (parsedRatio < parsedPreviousRatio) {
+        ratioTrend = "📉 LS Ratio giảm";
+    } else {
+        ratioTrend = "➖ LS Ratio không đổi";
+    }
 }
 
 
+// Gộp finalMessage như cũ
+const summaryPart = summary ? `\n\n📌 <b>Tín hiệu:</b>\n ${summary}\n${ratioTrend ? ratioTrend : ""}` : "";
 
+const finalMessage = [pricePart, liquidationPart, lsrPart, fundingRatePart, openInterestPart].join('\n\n') + summaryPart;
 
+messages.push({
+    symbol: displaySymbol,
+    message: finalMessage
+});
 
-const summaryPart = summary ? `\n\n📌 <b>Tín hiệu:</b> ${summary}` : "";
-
-
-        // ===== GỘP TOÀN BỘ PHẦN LẠI =====
-        const finalMessage = [pricePart, liquidationPart, lsrPart, fundingRatePart, openInterestPart].join('\n\n') + summaryPart;
-
-        messages.push({
-            symbol: displaySymbol,
-            message: finalMessage
-        });
-    }
+}
 
     return messages;
 }
