@@ -160,10 +160,10 @@ if (buyMorePercent > 10 && parsedRatio >= 1 && parsedPredicted > 0 && parsedOiCh
     summary = "🔻 <b>Funding Rate âm</b>";
 }
 
-// Nếu không có summary (không rõ xu hướng) thì bỏ qua symbol luôn
-if (!summary) {
-    continue;
-}
+// // Nếu không có summary (không rõ xu hướng) thì bỏ qua symbol luôn
+// if (!summary) {
+//     continue;
+// }
 
 let ratioTrend = "";
 
