@@ -59,6 +59,8 @@ const to = from; // Thời gian hiện tại
                     // In kết quả đã lọc
                     console.log(`✅ Nhóm ${i + 1 + idx} có ${filteredSymbols.length} symbols tăng mạnh >10%:`);
                     console.log("➡", filteredSymbols.join(", ") || "(không có)");
+                    console.log("📊 Số lượng symbol trong nhóm:", Object.keys(tempGroupData).length);
+
 
                     // Gộp vào allData để dùng sau (gửi telegram cuối cùng)
                     Object.entries(tempGroupData).forEach(([symbol, history]) => {
