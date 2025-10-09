@@ -7,9 +7,16 @@ const filterBullishAbove10Percent = require('./utils/filterBullishAbove10Percent
 const startScheduler = require('./scheduler/scheduler');
 const fetchAllData = require('./services/fetchAllData');
 
+
+
+const express = require("express");
+
+
 const axios = require('axios');
 
 
+
+// ==== WAIT ====
 
 // ==== WAIT ====
 function delay(ms) {
@@ -17,13 +24,14 @@ function delay(ms) {
 }
 
 // ==== MAIN FUNCTION ====
-
 startScheduler();
-
 fetchAllData();
 
-
-
+// ==== KEEP ALIVE FOR RENDER ====
+const app = express();
+app.get("/", (req, res) => res.send("🤖 Telegram bot is running ✅"));
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
 
 
